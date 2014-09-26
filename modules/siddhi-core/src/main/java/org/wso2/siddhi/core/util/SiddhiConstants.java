@@ -31,5 +31,5 @@ public final class SiddhiConstants {
 
     public static final String TRUE = "true";
 
-
+    public static int DEFAULT_TIMER_FREQUENCY = 1000;
 }

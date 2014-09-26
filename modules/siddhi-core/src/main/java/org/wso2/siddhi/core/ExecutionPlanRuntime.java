@@ -20,6 +20,7 @@
 package org.wso2.siddhi.core;
 
 import org.wso2.siddhi.core.config.SiddhiContext;
+import org.wso2.siddhi.core.exception.DefinitionNotExistException;
 import org.wso2.siddhi.core.exception.DifferentDefinitionAlreadyExistException;
 import org.wso2.siddhi.core.exception.QueryNotExistException;
 import org.wso2.siddhi.core.partition.PartitionRuntime;
@@ -31,16 +32,16 @@ import org.wso2.siddhi.core.stream.QueryStreamReceiver;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.input.InputHandlerManager;
+import org.wso2.siddhi.core.stream.input.TimerInputStreamHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
+import org.wso2.siddhi.core.util.SiddhiConstants;
 import org.wso2.siddhi.core.util.parser.OutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
 
 /**
  * keep streamDefinitions, partitionRuntimes, queryRuntimes of an executionPlan
@@ -53,15 +54,26 @@ public class ExecutionPlanRuntime {
     private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains stream junctions
     private ConcurrentMap<String, PartitionRuntime> partitionMap = new ConcurrentHashMap<String, PartitionRuntime>(); //contains partitions
     private SiddhiContext siddhiContext;
+    private TimerInputStreamHandler timerInputStreamHandler = new TimerInputStreamHandler();
+    private ScheduledExecutorService scheduledExecutorService;
+    private int timerFrequency = SiddhiConstants.DEFAULT_TIMER_FREQUENCY;
 
     public ExecutionPlanRuntime(SiddhiContext siddhiContext) {
         this.siddhiContext = siddhiContext;
     }
 
-    public InputHandler defineStream(StreamDefinition streamDefinition) {
+    /**
+     * Perform required initializations such as starting Timer Stream.
+     */
+    public void init() {
+        scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
+        scheduledExecutorService.scheduleAtFixedRate(timerInputStreamHandler, timerFrequency, timerFrequency, TimeUnit.MILLISECONDS);
+    }
+
+    public void defineStream(StreamDefinition streamDefinition) {
         validateStreamDefinition(streamDefinition);
-        InputHandler inputHandler = inputHandlerManager.getInputHandler(streamDefinition.getId());
-        if (inputHandler == null) {
+        //InputHandler inputHandler = inputHandlerManager.getInputHandler(streamDefinition.getId());
+        if (!streamDefinitionMap.containsKey(streamDefinition.getId())) {
             streamDefinitionMap.put(streamDefinition.getId(), streamDefinition);
             StreamJunction streamJunction = streamJunctionMap.get(streamDefinition.getId());
             if (streamJunction == null) {
@@ -69,10 +81,11 @@ public class ExecutionPlanRuntime {
                         siddhiContext.getDefaultEventBufferSize());
                 streamJunctionMap.put(streamDefinition.getId(), streamJunction);
             }
-            inputHandler = new InputHandler(streamDefinition.getId(), streamJunction);
-            return inputHandlerManager.setIfAbsentInputHandler(streamDefinition.getId(), inputHandler);
-        } else {
+            //inputHandler = new InputHandler(streamDefinition.getId(), streamJunction);
+            //return inputHandlerManager.setIfAbsentInputHandler(streamDefinition.getId(), inputHandler);
+       /* } else {
             return inputHandler;
+        }*/
         }
     }
 
@@ -127,7 +140,25 @@ public class ExecutionPlanRuntime {
     }
 
     public InputHandler getInputHandler(String streamId) {
-        return inputHandlerManager.getInputHandler(streamId);
+        InputHandler inputHandler = inputHandlerManager.getInputHandler(streamId);
+        if (inputHandler == null) {
+            StreamJunction streamJunction = streamJunctionMap.get(streamId);
+            if (streamJunction == null) {
+                StreamDefinition definition = (StreamDefinition) streamDefinitionMap.get(streamId);
+                if (definition != null) {
+                    streamJunction = new StreamJunction(definition, (ExecutorService) siddhiContext.getExecutorService(),
+                            siddhiContext.getDefaultEventBufferSize());
+                    streamJunctionMap.put(definition.getId(), streamJunction);
+                } else {
+                    throw new DefinitionNotExistException("Definition with ID " + streamId + " does not exist. Hence can not create input handler");
+                }
+            }
+            inputHandler = new InputHandler(streamId, streamJunction);
+            timerInputStreamHandler.addInputHandler(inputHandler);
+            return inputHandlerManager.setIfAbsentInputHandler(streamId, inputHandler);
+        } else {
+            return inputHandler;
+        }
     }
 
     public void addQueryRuntime(QueryRuntime queryRuntime) {
@@ -142,10 +173,15 @@ public class ExecutionPlanRuntime {
         return streamDefinitionMap;
     }
 
+    public void setTimerFrequency(int timerFrequency) {
+        this.timerFrequency = timerFrequency;
+    }
+
     public void shutdown() {
         inputHandlerManager.stopProcessing();
         for (StreamJunction streamJunction : streamJunctionMap.values()) {
             streamJunction.stopProcessing();
         }
+        scheduledExecutorService.shutdown();
     }
 }

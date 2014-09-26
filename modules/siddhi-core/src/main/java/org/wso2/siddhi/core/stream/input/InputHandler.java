@@ -64,6 +64,10 @@ public class InputHandler {
         }
     }
 
+    protected void sendTimerEvent(long timeStamp) {
+        publisher.send(timeStamp, null);     //null to distinguish timer event
+    }
+
     void disconnect() {
         this.publisher = null;
     }
