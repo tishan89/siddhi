@@ -30,7 +30,11 @@ public class TimerInputStreamHandler implements Runnable {
         if (!inputHandlerList.isEmpty()) {
             long timestamp = System.currentTimeMillis();
             for (InputHandler inputHandler : inputHandlerList) {
-                inputHandler.sendTimerEvent(timestamp);
+                try {
+                    inputHandler.sendTimerEvent(timestamp);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
