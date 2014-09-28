@@ -31,7 +31,7 @@ public class InputHandler {
     public InputHandler(String streamId, StreamJunction streamJunction) {
         this.streamId = streamId;
         this.publisher = streamJunction.constructPublisher();
-        this.pausedPublisher=publisher;
+        this.pausedPublisher = publisher;
     }
 
     public String getStreamId() {
@@ -65,7 +65,9 @@ public class InputHandler {
     }
 
     protected void sendTimerEvent(long timeStamp) {
-        publisher.send(timeStamp, null);     //null to distinguish timer event
+        if (publisher != null) {
+            publisher.send(timeStamp, null);     //null to distinguish timer event
+        }
     }
 
     void disconnect() {
