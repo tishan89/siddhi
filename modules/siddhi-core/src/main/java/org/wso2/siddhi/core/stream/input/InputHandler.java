@@ -21,12 +21,16 @@ package org.wso2.siddhi.core.stream.input;
 
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.stream.StreamJunction;
+import org.wso2.siddhi.core.util.SiddhiConstants;
 
 public class InputHandler {
 
     private String streamId;
     private StreamJunction.Publisher publisher;
     private StreamJunction.Publisher pausedPublisher;
+    private int count = 0;
+    private long bufferTime = 0;
+    private int bufferCalcFrequency = SiddhiConstants.DEFAULT_BUFFER_CALCULATION_FREQUENCY;  //in terms of events
 
     public InputHandler(String streamId, StreamJunction streamJunction) {
         this.streamId = streamId;
@@ -46,12 +50,14 @@ public class InputHandler {
 
     public void send(long timeStamp, Object[] data) throws InterruptedException {
         if (publisher != null) {
+            calibrate(timeStamp);
             publisher.send(timeStamp, data);
         }
     }
 
     public void send(Event event) throws InterruptedException {
         if (publisher != null) {
+            calibrate(event.getTimestamp());
             publisher.send(event);
         }
     }
@@ -59,6 +65,7 @@ public class InputHandler {
     public void send(Event[] events) throws InterruptedException {
         if (publisher != null) {
             for (Event event : events) {
+                calibrate(event.getTimestamp());
                 publisher.send(event);
             }
         }
@@ -66,8 +73,20 @@ public class InputHandler {
 
     protected void sendTimerEvent(long timeStamp) {
         if (publisher != null) {
-            publisher.send(timeStamp, null);     //null to distinguish timer event
+            publisher.send(timeStamp - bufferTime, null);     //null to distinguish timer event
         }
+    }
+
+    public void calibrate(long timestamp) {
+        count++;
+        if (count % bufferCalcFrequency == 0) {
+            bufferTime = System.currentTimeMillis() - timestamp;
+        }
+
+    }
+
+    public void setBufferCalcFrequency(int freq) {
+        bufferCalcFrequency = freq;
     }
 
     void disconnect() {

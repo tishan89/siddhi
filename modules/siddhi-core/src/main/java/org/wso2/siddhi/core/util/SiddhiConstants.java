@@ -30,6 +30,7 @@ public final class SiddhiConstants {
     public static final String ANNOTATION_ELEMENT_CALLBACK_ASYNC = "callback.async";
 
     public static final String TRUE = "true";
+    public static final int DEFAULT_BUFFER_CALCULATION_FREQUENCY = 1000;
 
     public static int DEFAULT_TIMER_FREQUENCY = 1000;
 }

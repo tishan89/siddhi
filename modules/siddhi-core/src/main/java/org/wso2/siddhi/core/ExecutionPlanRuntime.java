@@ -32,16 +32,17 @@ import org.wso2.siddhi.core.stream.QueryStreamReceiver;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.stream.input.InputHandlerManager;
-import org.wso2.siddhi.core.stream.input.TimerInputStreamHandler;
 import org.wso2.siddhi.core.stream.output.StreamCallback;
 import org.wso2.siddhi.core.stream.runtime.SingleStreamRuntime;
 import org.wso2.siddhi.core.stream.runtime.StreamRuntime;
-import org.wso2.siddhi.core.util.SiddhiConstants;
+import org.wso2.siddhi.core.util.EventTimer;
 import org.wso2.siddhi.core.util.parser.OutputParser;
 import org.wso2.siddhi.query.api.definition.AbstractDefinition;
 import org.wso2.siddhi.query.api.definition.StreamDefinition;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
 
 /**
  * keep streamDefinitions, partitionRuntimes, queryRuntimes of an executionPlan
@@ -54,9 +55,7 @@ public class ExecutionPlanRuntime {
     private ConcurrentMap<String, StreamJunction> streamJunctionMap = new ConcurrentHashMap<String, StreamJunction>(); //contains stream junctions
     private ConcurrentMap<String, PartitionRuntime> partitionMap = new ConcurrentHashMap<String, PartitionRuntime>(); //contains partitions
     private SiddhiContext siddhiContext;
-    private TimerInputStreamHandler timerInputStreamHandler = new TimerInputStreamHandler();
-    private ScheduledExecutorService scheduledExecutorService;
-    private int timerFrequency = SiddhiConstants.DEFAULT_TIMER_FREQUENCY;
+    private EventTimer eventTimer = new EventTimer();                                          //new event timer with default configs
 
     public ExecutionPlanRuntime(SiddhiContext siddhiContext) {
         this.siddhiContext = siddhiContext;
@@ -66,8 +65,7 @@ public class ExecutionPlanRuntime {
      * Perform required initializations such as starting Timer Stream.
      */
     public void init() {
-        scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
-        scheduledExecutorService.scheduleAtFixedRate(timerInputStreamHandler, timerFrequency, timerFrequency, TimeUnit.MILLISECONDS);
+        eventTimer.startTimerEvent();
     }
 
     public void defineStream(StreamDefinition streamDefinition) {
@@ -154,7 +152,7 @@ public class ExecutionPlanRuntime {
                 }
             }
             inputHandler = new InputHandler(streamId, streamJunction);
-            timerInputStreamHandler.addInputHandler(inputHandler);
+            eventTimer.addInputHandler(inputHandler);
             return inputHandlerManager.setIfAbsentInputHandler(streamId, inputHandler);
         } else {
             return inputHandler;
@@ -174,7 +172,7 @@ public class ExecutionPlanRuntime {
     }
 
     public void setTimerFrequency(int timerFrequency) {
-        this.timerFrequency = timerFrequency;
+        this.eventTimer.setTimerFrequency(timerFrequency);
     }
 
     public void shutdown() {
@@ -182,6 +180,6 @@ public class ExecutionPlanRuntime {
         for (StreamJunction streamJunction : streamJunctionMap.values()) {
             streamJunction.stopProcessing();
         }
-        scheduledExecutorService.shutdown();
+        eventTimer.shutdown();
     }
 }

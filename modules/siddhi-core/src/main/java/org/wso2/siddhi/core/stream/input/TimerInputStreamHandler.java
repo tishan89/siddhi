@@ -18,12 +18,15 @@
  */
 package org.wso2.siddhi.core.stream.input;
 
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TimerInputStreamHandler implements Runnable {
 
-    List<InputHandler> inputHandlerList = new ArrayList<InputHandler>();
+    private static Logger log = Logger.getLogger(TimerInputStreamHandler.class);
+    private List<InputHandler> inputHandlerList = new ArrayList<InputHandler>();
 
     @Override
     public void run() {
@@ -33,7 +36,7 @@ public class TimerInputStreamHandler implements Runnable {
                 try {
                     inputHandler.sendTimerEvent(timestamp);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
             }
         }
