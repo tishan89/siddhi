@@ -61,13 +61,6 @@ public class ExecutionPlanRuntime {
         this.siddhiContext = siddhiContext;
     }
 
-    /**
-     * Perform required initializations such as starting Timer Stream.
-     */
-    public void init() {
-        eventTimer.startTimerEvent();
-    }
-
     public void defineStream(StreamDefinition streamDefinition) {
         validateStreamDefinition(streamDefinition);
         //InputHandler inputHandler = inputHandlerManager.getInputHandler(streamDefinition.getId());

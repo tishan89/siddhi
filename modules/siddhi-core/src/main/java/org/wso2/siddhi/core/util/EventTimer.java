@@ -30,14 +30,19 @@ public class EventTimer {
     private TimerInputStreamHandler timerInputStreamHandler = new TimerInputStreamHandler();
     private ScheduledExecutorService scheduledExecutorService;
     private int timerFrequency = SiddhiConstants.DEFAULT_TIMER_FREQUENCY;
+    private Boolean isInitialized = false;
 
-    public void startTimerEvent() {
+    private void startTimerEvent() {
         scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
         scheduledExecutorService.scheduleAtFixedRate(timerInputStreamHandler, timerFrequency, timerFrequency, TimeUnit.MILLISECONDS);
     }
 
     public void addInputHandler(InputHandler inputHandler) {
         timerInputStreamHandler.addInputHandler(inputHandler);
+        if (!isInitialized) {
+            isInitialized = true;
+            startTimerEvent();
+        }
     }
 
     public int getTimerFrequency() {
