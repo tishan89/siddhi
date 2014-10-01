@@ -24,6 +24,7 @@ import java.util.Arrays;
 
 public class Event {
 
+    public boolean isTimerEvent = false;
     protected long timestamp = -1;
     protected Object[] data;
     protected boolean isExpired = false;

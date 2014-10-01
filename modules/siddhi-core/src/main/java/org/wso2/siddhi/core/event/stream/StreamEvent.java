@@ -29,6 +29,7 @@ public class StreamEvent implements ComplexEvent {
     protected long timestamp = -1;
     protected Object[] outputData;              //Attributes to sent as output
     protected boolean isExpired = false;
+    private boolean isTimerEvent = false;
     private Object[] beforeWindowData;          //Attributes before window execution
     private Object[] onAfterWindowData;         //Attributes on and after window execution
     private StreamEvent next;
@@ -41,6 +42,12 @@ public class StreamEvent implements ComplexEvent {
 
     public StreamEvent() {
         //Do nothing
+    }
+
+    //For timer events
+    public StreamEvent(long timestamp) {
+        this.timestamp = timestamp;
+        this.isTimerEvent = true;
     }
 
     public Object[] getBeforeWindowData() {
@@ -144,5 +151,9 @@ public class StreamEvent implements ComplexEvent {
         } else {
             next.addToLast(event);
         }
+    }
+
+    public Boolean isTimerEvent() {
+        return isTimerEvent;
     }
 }
