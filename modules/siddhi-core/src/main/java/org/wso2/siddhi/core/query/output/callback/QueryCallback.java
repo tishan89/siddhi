@@ -57,11 +57,12 @@ public abstract class QueryCallback {
     }
 
     public void receiveStreamEvent(long timeStamp, StreamEvent currentStreamEvent, StreamEvent expiredStreamEvent) {
-
-        if (disruptor == null) {
-            send(timeStamp, currentStreamEvent, expiredStreamEvent);
-        } else {
-            sendAsync(timeStamp, currentStreamEvent, expiredStreamEvent);
+        if (!currentStreamEvent.isTimerEvent()) {
+            if (disruptor == null) {
+                send(timeStamp, currentStreamEvent, expiredStreamEvent);
+            } else {
+                sendAsync(timeStamp, currentStreamEvent, expiredStreamEvent);
+            }
         }
     }
 
@@ -79,7 +80,7 @@ public abstract class QueryCallback {
     }
 
     private void send(long timeStamp, StreamEvent currentStreamEvent, StreamEvent expiredStreamEvent, boolean endOfBatch) {
-
+        //TODO handle timer events
         if (endOfBatch) {
             send(timeStamp, currentStreamEvent, expiredStreamEvent);
         } else {
@@ -92,7 +93,6 @@ public abstract class QueryCallback {
     }
 
     private void send(long timeStamp, StreamEvent currentStreamEvent, StreamEvent expiredStreamEvent) {
-
         Event[] currentEvents = null;
         Event[] expiredEvents = null;
 
