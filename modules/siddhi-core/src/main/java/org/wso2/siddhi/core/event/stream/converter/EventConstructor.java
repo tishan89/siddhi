@@ -84,6 +84,8 @@ public abstract class EventConstructor {
      * @param streamEvent used stream event
      */
     public void returnEvent(StreamEvent streamEvent) {
-        streamEventPool.returnEvent(streamEvent);
+        if (!streamEvent.isTimerEvent()) {       //can add if check to caller for improved performance
+            streamEventPool.returnEvent(streamEvent);
+        }
     }
 }
