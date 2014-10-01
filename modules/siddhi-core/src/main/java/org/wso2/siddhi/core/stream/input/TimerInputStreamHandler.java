@@ -34,7 +34,7 @@ public class TimerInputStreamHandler implements Runnable {
             long timestamp = System.currentTimeMillis();
             for (InputHandler inputHandler : inputHandlerList) {
                 try {
-                    inputHandler.sendTimerEvent(timestamp);
+                    inputHandler.send(timestamp);
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }

@@ -71,7 +71,7 @@ public class InputHandler {
         }
     }
 
-    protected void sendTimerEvent(long timeStamp) {
+    protected void send(long timeStamp) {
         if (publisher != null) {
             publisher.send(timeStamp - bufferTime, null);     //null to distinguish timer event
         }
