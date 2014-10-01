@@ -42,7 +42,7 @@ public abstract class EventConstructor {
      * @return constructed StreamEvent
      */
     public StreamEvent constructStreamEvent(Event event) {
-        if (event.isTimerEvent) {
+        if (event.isTimerEvent()) {
             return new StreamEvent(event.getTimestamp());
         } else {
             return constructStreamEvent(event.getData(), event.isExpired(), event.getTimestamp());

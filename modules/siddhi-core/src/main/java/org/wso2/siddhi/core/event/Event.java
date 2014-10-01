@@ -24,10 +24,10 @@ import java.util.Arrays;
 
 public class Event {
 
-    public boolean isTimerEvent = false;
     protected long timestamp = -1;
     protected Object[] data;
     protected boolean isExpired = false;
+    private boolean isTimerEvent = false;
 
     public Event(long timestamp, Object[] data) {
         this.timestamp = timestamp;
@@ -91,5 +91,9 @@ public class Event {
         System.arraycopy(streamEventList.getOutputData(), 0, data, 0, data.length);
         isExpired = streamEventList.isExpired();
         return this;
+    }
+
+    public Boolean isTimerEvent() {
+        return isTimerEvent;
     }
 }
