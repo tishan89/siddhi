@@ -38,20 +38,24 @@ public class LengthBatchWindowProcessor extends WindowProcessor {
 
     @Override
     public void process(StreamEvent event) {
-        StreamEvent currentEvent;
-        StreamEvent head = event;
-        while (event != null) {
-            processEvent(event);
-            currentEvent = event;
-            event = event.getNext();
-            if (count == length) {
-                currentEvent.setNext(removeEventHead);
-                removeEventHead = null;
-                removeEventTail.setNext(event);
-                count = 0;
+        if (event.isTimerEvent()) {
+            nextProcessor.process(event);
+        } else {
+            StreamEvent currentEvent;
+            StreamEvent head = event;
+            while (event != null) {
+                processEvent(event);
+                currentEvent = event;
+                event = event.getNext();
+                if (count == length) {
+                    currentEvent.setNext(removeEventHead);
+                    removeEventHead = null;
+                    removeEventTail.setNext(event);
+                    count = 0;
+                }
             }
+            nextProcessor.process(head);
         }
-        nextProcessor.process(head);
     }
 
     /**

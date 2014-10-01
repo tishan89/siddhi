@@ -31,22 +31,26 @@ public class FilterProcessor implements Processor {
     private ExpressionExecutor conditionExecutor;
 
     public FilterProcessor(ExpressionExecutor conditionExecutor) {
-        if(Attribute.Type.BOOL.equals(conditionExecutor.getReturnType())) {
+        if (Attribute.Type.BOOL.equals(conditionExecutor.getReturnType())) {
             this.conditionExecutor = conditionExecutor;
-        }else{
-            throw new OperationNotSupportedException("Return type of "+conditionExecutor.toString()+" should be of type BOOL. " +
-                    "Actual type: "+conditionExecutor.getReturnType().toString());
+        } else {
+            throw new OperationNotSupportedException("Return type of " + conditionExecutor.toString() + " should be of type BOOL. " +
+                    "Actual type: " + conditionExecutor.getReturnType().toString());
         }
     }
 
-    public FilterProcessor cloneProcessor(){
+    public FilterProcessor cloneProcessor() {
         return new FilterProcessor(conditionExecutor.cloneExecutor());
     }
 
     @Override
     public void process(StreamEvent event) {
-        if ((Boolean) conditionExecutor.execute(event)) {
+        if (event.isTimerEvent()) {
             this.next.process(event);
+        } else {
+            if ((Boolean) conditionExecutor.execute(event)) {
+                this.next.process(event);
+            }
         }
     }
 

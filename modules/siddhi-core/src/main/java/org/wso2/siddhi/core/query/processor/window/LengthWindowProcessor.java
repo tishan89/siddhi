@@ -38,28 +38,32 @@ public class LengthWindowProcessor extends WindowProcessor {
 
     @Override
     public void process(StreamEvent event) {
-        StreamEvent head = event;           //head of in events
-        StreamEvent expiredEventTail;
-        StreamEvent expiredEventHead;
-        while (event != null) {
-            processEvent(event);
-            event = event.getNext();
-        }
-        //if window is expired
-        if (count > length) {
-            int diff = count - length;
-            expiredEventTail = removeEventHead;
-            for (int i = 1; i < diff; i++) {
-                expiredEventTail = expiredEventTail.getNext();
-            }
-            expiredEventHead = removeEventHead;
-            removeEventHead = expiredEventTail.getNext();
-            expiredEventTail.setNext(null);
-            head.addToLast(expiredEventHead);
-            nextProcessor.process(head);                            //emit in events and remove events as expired events
-            count = count - diff;
+        if (event.isTimerEvent()) {
+            nextProcessor.process(event);
         } else {
-            nextProcessor.process(head);                            //emit only in events as window is not expired
+            StreamEvent head = event;           //head of in events
+            StreamEvent expiredEventTail;
+            StreamEvent expiredEventHead;
+            while (event != null) {
+                processEvent(event);
+                event = event.getNext();
+            }
+            //if window is expired
+            if (count > length) {
+                int diff = count - length;
+                expiredEventTail = removeEventHead;
+                for (int i = 1; i < diff; i++) {
+                    expiredEventTail = expiredEventTail.getNext();
+                }
+                expiredEventHead = removeEventHead;
+                removeEventHead = expiredEventTail.getNext();
+                expiredEventTail.setNext(null);
+                head.addToLast(expiredEventHead);
+                nextProcessor.process(head);                            //emit in events and remove events as expired events
+                count = count - diff;
+            } else {
+                nextProcessor.process(head);                            //emit only in events as window is not expired
+            }
         }
     }
 
