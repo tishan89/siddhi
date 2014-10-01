@@ -20,8 +20,20 @@ package org.wso2.siddhi.core.event.stream.converter;
 
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
+import org.wso2.siddhi.core.event.stream.StreamEventPool;
 
-public interface EventConstructor {
+public abstract class EventConstructor {
+    protected StreamEventPool streamEventPool;
+
+    /**
+     * Method where real construction happens. Every child class should implement this appropriately.
+     *
+     * @param data
+     * @param isExpected
+     * @param timestamp
+     * @return
+     */
+    protected abstract StreamEvent constructStreamEvent(Object[] data, boolean isExpected, long timestamp);
 
     /**
      * Method to construct StreamEvent form Event
@@ -29,7 +41,13 @@ public interface EventConstructor {
      * @param event Event to be converted
      * @return constructed StreamEvent
      */
-    public StreamEvent constructStreamEvent(Event event);
+    public StreamEvent constructStreamEvent(Event event) {
+        if (event.isTimerEvent) {
+            return new StreamEvent(event.getTimestamp());
+        } else {
+            return constructStreamEvent(event.getData(), event.isExpired(), event.getTimestamp());
+        }
+    }
 
     /**
      * Method to construct(change format) new StreamEvent from StreamEvent
@@ -37,7 +55,13 @@ public interface EventConstructor {
      * @param streamEvent StreamEvent to be Converted
      * @return constructed StreamEvent
      */
-    public StreamEvent constructStreamEvent(StreamEvent streamEvent);
+    public StreamEvent constructStreamEvent(StreamEvent streamEvent) {
+        if (streamEvent.isTimerEvent()) {
+            return streamEvent;
+        } else {
+            return constructStreamEvent(streamEvent.getOutputData(), streamEvent.isExpired(), streamEvent.getTimestamp());
+        }
+    }
 
     /**
      * Method to construct(change format) timeStamp and data from StreamEvent
@@ -46,12 +70,20 @@ public interface EventConstructor {
      * @param data      output data of the event
      * @return constructed StreamEvent
      */
-    public StreamEvent constructStreamEvent(long timeStamp, Object[] data);
+    public StreamEvent constructStreamEvent(long timeStamp, Object[] data) {
+        if (data == null) {
+            return new StreamEvent(timeStamp);
+        } else {
+            return constructStreamEvent(data, false, timeStamp);
+        }
+    }
 
     /**
      * Return the used event back to the pool
      *
      * @param streamEvent used stream event
      */
-    public void returnEvent(StreamEvent streamEvent);
+    public void returnEvent(StreamEvent streamEvent) {
+        streamEventPool.returnEvent(streamEvent);
+    }
 }

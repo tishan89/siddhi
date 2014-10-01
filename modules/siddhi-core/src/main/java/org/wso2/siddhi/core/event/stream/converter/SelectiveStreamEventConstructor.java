@@ -17,7 +17,6 @@
 */
 package org.wso2.siddhi.core.event.stream.converter;
 
-import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventPool;
 
@@ -26,18 +25,18 @@ import java.util.List;
 /**
  * The converter class that converts event into StreamEvent
  */
-public class SelectiveStreamEventConstructor implements EventConstructor {
+public class SelectiveStreamEventConstructor extends EventConstructor {
 
     private List<ConverterElement> converterElements;       //List to hold information needed for conversion
     private StreamEventPool streamEventPool;
 
 
     public SelectiveStreamEventConstructor(StreamEventPool streamEventPool, List<ConverterElement> converterElements) {
-        this.streamEventPool = streamEventPool;
+        super.streamEventPool = streamEventPool;
         this.converterElements = converterElements;
     }
 
-    private StreamEvent convertToInnerStreamEvent(Object[] data, boolean isExpected, long timestamp) {
+    protected StreamEvent constructStreamEvent(Object[] data, boolean isExpected, long timestamp) {
         StreamEvent streamEvent = streamEventPool.borrowEvent();
         for (ConverterElement converterElement : converterElements) {
             int[] position = converterElement.getToPosition();
@@ -60,24 +59,5 @@ public class SelectiveStreamEventConstructor implements EventConstructor {
         streamEvent.setTimestamp(timestamp);
 
         return streamEvent;
-    }
-
-
-    public StreamEvent constructStreamEvent(Event event) {
-        return convertToInnerStreamEvent(event.getData(), event.isExpired(), event.getTimestamp());
-    }
-
-    public StreamEvent constructStreamEvent(StreamEvent streamEvent) {
-        return convertToInnerStreamEvent(streamEvent.getOutputData(), streamEvent.isExpired(), streamEvent.getTimestamp());
-    }
-
-    @Override
-    public StreamEvent constructStreamEvent(long timeStamp, Object[] data) {
-        return convertToInnerStreamEvent(data, false, timeStamp);
-    }
-
-    @Override
-    public void returnEvent(StreamEvent streamEvent) {
-        streamEventPool.returnEvent(streamEvent);
     }
 }

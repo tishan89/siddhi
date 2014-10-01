@@ -18,42 +18,22 @@
  */
 package org.wso2.siddhi.core.event.stream.converter;
 
-import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventPool;
 
-public class PassThroughStreamEventConstructor implements EventConstructor {
+public class PassThroughStreamEventConstructor extends EventConstructor {
     private StreamEventPool streamEventPool;
 
     public PassThroughStreamEventConstructor(StreamEventPool streamEventPool) {
-        this.streamEventPool = streamEventPool;
+        super.streamEventPool = streamEventPool;
     }
 
-    private StreamEvent convertToInnerStreamEvent(Object[] data, boolean isExpected, long timestamp) {
+    protected StreamEvent constructStreamEvent(Object[] data, boolean isExpected, long timestamp) {
         StreamEvent streamEvent = streamEventPool.borrowEvent();
         System.arraycopy(data, 0, streamEvent.getOutputData(), 0, data.length);
         streamEvent.setExpired(isExpected);
         streamEvent.setTimestamp(timestamp);
 
         return streamEvent;
-    }
-
-
-    public StreamEvent constructStreamEvent(Event event) {
-        return convertToInnerStreamEvent(event.getData(), event.isExpired(), event.getTimestamp());
-    }
-
-    public StreamEvent constructStreamEvent(StreamEvent streamEvent) {
-        return convertToInnerStreamEvent(streamEvent.getOutputData(), streamEvent.isExpired(), streamEvent.getTimestamp());
-    }
-
-    @Override
-    public StreamEvent constructStreamEvent(long timeStamp, Object[] data) {
-        return convertToInnerStreamEvent(data, false, timeStamp);
-    }
-
-    @Override
-    public void returnEvent(StreamEvent streamEvent) {
-        streamEventPool.returnEvent(streamEvent);
     }
 }
