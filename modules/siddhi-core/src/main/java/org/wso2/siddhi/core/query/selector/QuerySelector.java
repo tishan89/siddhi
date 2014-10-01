@@ -69,24 +69,28 @@ public class QuerySelector implements Processor {
             log.trace("event is processed by selector "+ id+ this);
         }*/
 
-        if (isGroupBy) {
-            keyThreadLocal.set(groupByKeyGenerator.constructEventKey(streamEvent));
-        }
-
-        //TODO: have to change for windows
-        for (AttributeProcessor attributeProcessor : attributeProcessorList) {
-            attributeProcessor.process(streamEvent);
-        }
-
-        if (isGroupBy) {
-            keyThreadLocal.remove();
-        }
-
-        if (havingConditionExecutor == null) {
+        if (streamEvent.isTimerEvent()) {
             outputRateLimiter.send(streamEvent.getTimestamp(), streamEvent, null);
         } else {
-            if (havingConditionExecutor.execute(streamEvent)) {
+            if (isGroupBy) {
+                keyThreadLocal.set(groupByKeyGenerator.constructEventKey(streamEvent));
+            }
+
+            //TODO: have to change for windows
+            for (AttributeProcessor attributeProcessor : attributeProcessorList) {
+                attributeProcessor.process(streamEvent);
+            }
+
+            if (isGroupBy) {
+                keyThreadLocal.remove();
+            }
+
+            if (havingConditionExecutor == null) {
                 outputRateLimiter.send(streamEvent.getTimestamp(), streamEvent, null);
+            } else {
+                if (havingConditionExecutor.execute(streamEvent)) {
+                    outputRateLimiter.send(streamEvent.getTimestamp(), streamEvent, null);
+                }
             }
         }
 
