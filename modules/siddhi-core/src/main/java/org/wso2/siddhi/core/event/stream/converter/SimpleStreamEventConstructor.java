@@ -24,7 +24,6 @@ import org.wso2.siddhi.core.event.stream.StreamEventPool;
 import java.util.List;
 
 public class SimpleStreamEventConstructor extends EventConstructor {
-    private StreamEventPool streamEventPool;
     private List<ConverterElement> converterElements;
 
     public SimpleStreamEventConstructor(StreamEventPool streamEventPool, List<ConverterElement> converterElements) {

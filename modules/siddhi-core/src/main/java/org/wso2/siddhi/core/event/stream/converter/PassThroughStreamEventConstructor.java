@@ -22,7 +22,6 @@ import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventPool;
 
 public class PassThroughStreamEventConstructor extends EventConstructor {
-    private StreamEventPool streamEventPool;
 
     public PassThroughStreamEventConstructor(StreamEventPool streamEventPool) {
         super.streamEventPool = streamEventPool;

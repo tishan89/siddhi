@@ -28,8 +28,6 @@ import java.util.List;
 public class SelectiveStreamEventConstructor extends EventConstructor {
 
     private List<ConverterElement> converterElements;       //List to hold information needed for conversion
-    private StreamEventPool streamEventPool;
-
 
     public SelectiveStreamEventConstructor(StreamEventPool streamEventPool, List<ConverterElement> converterElements) {
         super.streamEventPool = streamEventPool;
