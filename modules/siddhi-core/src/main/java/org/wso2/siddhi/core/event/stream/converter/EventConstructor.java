@@ -43,7 +43,10 @@ public abstract class EventConstructor {
      */
     public StreamEvent constructStreamEvent(Event event) {
         if (event.isTimerEvent()) {
-            return new StreamEvent(event.getTimestamp());
+            StreamEvent streamEvent = streamEventPool.borrowEvent();
+            streamEvent.setTimestamp(event.getTimestamp());
+            streamEvent.setTimerEvent(true);
+            return streamEvent;
         } else {
             return constructStreamEvent(event.getData(), event.isExpired(), event.getTimestamp());
         }
@@ -72,7 +75,10 @@ public abstract class EventConstructor {
      */
     public StreamEvent constructStreamEvent(long timeStamp, Object[] data) {
         if (data == null) {
-            return new StreamEvent(timeStamp);
+            StreamEvent streamEvent = streamEventPool.borrowEvent();
+            streamEvent.setTimestamp(timeStamp);
+            streamEvent.setTimerEvent(true);
+            return streamEvent;
         } else {
             return constructStreamEvent(data, false, timeStamp);
         }
@@ -84,8 +90,6 @@ public abstract class EventConstructor {
      * @param streamEvent used stream event
      */
     public void returnEvent(StreamEvent streamEvent) {
-        if (!streamEvent.isTimerEvent()) {       //can add if check to caller for improved performance
-            streamEventPool.returnEvent(streamEvent);
-        }
+        streamEventPool.returnEvent(streamEvent);
     }
 }

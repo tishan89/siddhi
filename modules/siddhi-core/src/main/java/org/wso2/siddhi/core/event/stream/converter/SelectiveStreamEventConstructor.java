@@ -55,6 +55,7 @@ public class SelectiveStreamEventConstructor extends EventConstructor {
 
         streamEvent.setExpired(isExpected);
         streamEvent.setTimestamp(timestamp);
+        streamEvent.setTimerEvent(false);
 
         return streamEvent;
     }

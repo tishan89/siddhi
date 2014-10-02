@@ -32,6 +32,7 @@ public class PassThroughStreamEventConstructor extends EventConstructor {
         System.arraycopy(data, 0, streamEvent.getOutputData(), 0, data.length);
         streamEvent.setExpired(isExpected);
         streamEvent.setTimestamp(timestamp);
+        streamEvent.setTimerEvent(false);
 
         return streamEvent;
     }
