@@ -156,4 +156,8 @@ public class StreamEvent implements ComplexEvent {
     public Boolean isTimerEvent() {
         return isTimerEvent;
     }
+
+    public void setTimerEvent(boolean isTimerEvent) {
+        this.isTimerEvent = isTimerEvent;
+    }
 }
