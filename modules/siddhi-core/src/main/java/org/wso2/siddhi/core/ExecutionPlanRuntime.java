@@ -146,6 +146,7 @@ public class ExecutionPlanRuntime {
             }
             inputHandler = new InputHandler(streamId, streamJunction);
             eventTimer.addInputHandler(inputHandler);
+            streamJunction.startProcessing();
             return inputHandlerManager.setIfAbsentInputHandler(streamId, inputHandler);
         } else {
             return inputHandler;
