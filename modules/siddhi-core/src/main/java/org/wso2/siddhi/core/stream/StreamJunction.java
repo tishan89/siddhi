@@ -105,8 +105,13 @@ public class StreamJunction {
             try {
                 Event existingEvent = ringBuffer.get(sequenceNo);
                 existingEvent.setTimestamp(timeStamp);
-                existingEvent.setIsExpired(true);
-                System.arraycopy(data, 0, existingEvent.getData(), 0, data.length);
+                existingEvent.setIsExpired(false);
+                if (data == null) {
+                    existingEvent.setTimerEvent(true);
+                } else {
+                    existingEvent.setTimerEvent(false);
+                    System.arraycopy(data, 0, existingEvent.getData(), 0, data.length);
+                }
             } finally {
                 ringBuffer.publish(sequenceNo);
             }
