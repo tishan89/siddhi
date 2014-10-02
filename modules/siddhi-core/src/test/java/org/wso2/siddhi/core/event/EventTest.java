@@ -25,7 +25,7 @@ import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventFactory;
 import org.wso2.siddhi.core.event.stream.StreamEventPool;
-import org.wso2.siddhi.core.event.stream.converter.*;
+import org.wso2.siddhi.core.event.stream.constructor.*;
 import org.wso2.siddhi.core.exception.OperationNotSupportedException;
 import org.wso2.siddhi.core.executor.ConstantExpressionExecutor;
 import org.wso2.siddhi.core.executor.ExpressionExecutor;
@@ -102,7 +102,7 @@ public class EventTest {
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.DOUBLE).attribute("volume", Attribute.Type.INT);
         Event event = new Event(System.currentTimeMillis(), new Object[]{"WSO2", 200, 50});
 
-        metaStreamEvent.setDefinition(streamDefinition);
+        metaStreamEvent.setInputDefinition(streamDefinition);
         EventConstructor converter = StreamEventConverterFactory.getConverter(metaStreamEvent);
         StreamEvent streamEvent = converter.constructStreamEvent(event);
 
@@ -126,7 +126,7 @@ public class EventTest {
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.DOUBLE).attribute("volume", Attribute.Type.INT);
         Event event = new Event(System.currentTimeMillis(), new Object[]{"WSO2", 200, 50});
 
-        metaStreamEvent.setDefinition(streamDefinition);
+        metaStreamEvent.setInputDefinition(streamDefinition);
         EventConstructor converter = StreamEventConverterFactory.getConverter(metaStreamEvent);
         StreamEvent streamEvent = converter.constructStreamEvent(event);
 
@@ -155,7 +155,7 @@ public class EventTest {
         StreamDefinition streamDefinition = StreamDefinition.id("cseEventStream").attribute("symbol", Attribute.Type.STRING).attribute("price", Attribute.Type.DOUBLE).attribute("volume", Attribute.Type.INT);
         Event event = new Event(System.currentTimeMillis(), new Object[]{"WSO2", 200, 50});
 
-        metaStreamEvent.setDefinition(streamDefinition);
+        metaStreamEvent.setInputDefinition(streamDefinition);
         EventConstructor converter = StreamEventConverterFactory.getConverter(metaStreamEvent);
         StreamEvent streamEvent = converter.constructStreamEvent(event);
 

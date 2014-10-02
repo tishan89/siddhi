@@ -16,24 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.siddhi.core.event.stream.converter;
+package org.wso2.siddhi.core.event.stream.constructor;
 
 import org.wso2.siddhi.core.event.stream.StreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventPool;
 
-public class PassThroughStreamEventConstructor extends EventConstructor {
+import java.util.List;
 
-    public PassThroughStreamEventConstructor(StreamEventPool streamEventPool) {
+public class SimpleStreamEventConstructor extends EventConstructor {
+    private List<ConverterElement> converterElements;
+
+    public SimpleStreamEventConstructor(StreamEventPool streamEventPool, List<ConverterElement> converterElements) {
         super.streamEventPool = streamEventPool;
+        this.converterElements = converterElements;
     }
 
     protected StreamEvent constructStreamEvent(Object[] data, boolean isExpected, long timestamp) {
         StreamEvent streamEvent = streamEventPool.borrowEvent();
-        System.arraycopy(data, 0, streamEvent.getOutputData(), 0, data.length);
+        for (ConverterElement element : converterElements) {
+            streamEvent.setOutputData(data[element.getFromPosition()], element.getToPosition()[1]);
+        }
         streamEvent.setExpired(isExpected);
         streamEvent.setTimestamp(timestamp);
         streamEvent.setTimerEvent(false);
 
         return streamEvent;
     }
+
 }

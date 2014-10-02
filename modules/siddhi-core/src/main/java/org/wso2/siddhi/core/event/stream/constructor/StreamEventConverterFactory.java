@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.siddhi.core.event.stream.converter;
+package org.wso2.siddhi.core.event.stream.constructor;
 
 import org.wso2.siddhi.core.event.stream.MetaStreamEvent;
 import org.wso2.siddhi.core.event.stream.StreamEventFactory;
@@ -29,7 +29,7 @@ import java.util.List;
 
 public class StreamEventConverterFactory {
     public static EventConstructor getConverter(MetaStreamEvent metaStreamEvent) {
-        StreamDefinition defaultDefinition = (StreamDefinition) metaStreamEvent.getDefinition();
+        StreamDefinition defaultDefinition = (StreamDefinition) metaStreamEvent.getInputDefinition();
         int beforeWindowDataSize = metaStreamEvent.getBeforeWindowData().size();
         int onAfterWindowDataSize = metaStreamEvent.getAfterWindowData().size();
         int outputDataSize = metaStreamEvent.getOutputData().size();
@@ -38,8 +38,7 @@ public class StreamEventConverterFactory {
         int defaultPoolSize = 5;
         StreamEventPool streamEventPool = new StreamEventPool(eventFactory, defaultPoolSize);
         int size = metaStreamEvent.getBeforeWindowData().size() + metaStreamEvent.getAfterWindowData().size() + metaStreamEvent.getOutputData().size();
-        ArrayList<ConverterElement> converterElements = new ArrayList<ConverterElement>(size);
-
+        List<ConverterElement> converterElements = new ArrayList<ConverterElement>(size);
 
         for (int j = 0; j < 3; j++) {
             List<Attribute> currentDataList = null;
@@ -71,7 +70,7 @@ public class StreamEventConverterFactory {
         if (beforeWindowDataSize + onAfterWindowDataSize > 0) {
             return new SelectiveStreamEventConstructor(streamEventPool, converterElements);
         } else {
-            if (metaStreamEvent.getDefinition().getAttributeList().size() == converterElements.size()) {
+            if (metaStreamEvent.getInputDefinition().getAttributeList().size() == converterElements.size()) {
                 Boolean isPassThrough = true;
                 for (int k = 0; k < converterElements.size(); k++) {
                     if (!(converterElements.get(k).getFromPosition() == converterElements.get(k).getToPosition()[1])) {

@@ -63,9 +63,8 @@ public class SingleInputStreamParser {
             }
         }
         metaStreamEvent.intializeAfterWindowData();
-        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver((StreamDefinition) metaStreamEvent.getDefinition());
-        SingleStreamRuntime singleStreamRuntime = new SingleStreamRuntime(queryStreamReceiver, processor);
-        return singleStreamRuntime;
+        QueryStreamReceiver queryStreamReceiver = new QueryStreamReceiver((StreamDefinition) metaStreamEvent.getInputDefinition());
+        return new SingleStreamRuntime(queryStreamReceiver, processor);
     }
 
     private static Processor generateProcessor(StreamHandler handler, SiddhiContext context, MetaStreamEvent metaStreamEvent,
