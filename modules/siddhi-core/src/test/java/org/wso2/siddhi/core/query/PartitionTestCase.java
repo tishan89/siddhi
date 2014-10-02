@@ -68,7 +68,7 @@ public class PartitionTestCase {
             public void receive(Event[] events) {
                 EventPrinter.print(events);
                 Assert.assertTrue("IBM".equals(events[0].getData(0)) || "WSO2".equals(events[0].getData(0)));
-                count = count+events.length;
+                count = count + events.length;
                 eventArrived = true;
             }
         });
@@ -100,7 +100,7 @@ public class PartitionTestCase {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                count = count+events.length;
+                count = count + events.length;
                 eventArrived = true;
                 if (count == 1) {
                     Assert.assertEquals(75.5999984741211, events[0].getData()[1]);
@@ -140,7 +140,7 @@ public class PartitionTestCase {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                count = count+events.length;
+                count = count + events.length;
                 eventArrived = true;
             }
         });
@@ -205,7 +205,7 @@ public class PartitionTestCase {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                count = count+events.length;
+                count = count + events.length;
                 eventArrived = true;
             }
         });
@@ -308,7 +308,7 @@ public class PartitionTestCase {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                count = count+events.length;
+                count = count + events.length;
                 eventArrived = true;
             }
         });
@@ -447,7 +447,7 @@ public class PartitionTestCase {
         executionRuntime.addCallback("StockStream", new StreamCallback() {
             @Override
             public void receive(Event[] events) {
-                stockStreamEventCount = stockStreamEventCount+events.length;
+                stockStreamEventCount = stockStreamEventCount + events.length;
 
             }
         });
@@ -457,7 +457,7 @@ public class PartitionTestCase {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                count = count+events.length;
+                count = count + events.length;
                 eventArrived = true;
             }
         });
@@ -509,7 +509,7 @@ public class PartitionTestCase {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                count = count+events.length;
+                count = count + events.length;
                 eventArrived = true;
             }
         });
@@ -553,7 +553,7 @@ public class PartitionTestCase {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                count = count+events.length;
+                count = count + events.length;
                 if (count == 1) {
                     Assert.assertEquals(75.0, events[0].getData()[1]);
                 } else if (count == 2) {
@@ -561,7 +561,7 @@ public class PartitionTestCase {
                 } else if (count == 3) {
                     Assert.assertEquals(110.0, events[0].getData()[1]);
                 } else if (count == 4) {
-                    Assert.assertEquals(50.0,events[0].getData()[1]);
+                    Assert.assertEquals(50.0, events[0].getData()[1]);
                 }
                 eventArrived = true;
             }
@@ -596,7 +596,7 @@ public class PartitionTestCase {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                count = count+events.length;
+                count = count + events.length;
                 if (count == 1) {
                     Assert.assertEquals(75.0f, events[0].getData()[1]);
                 } else if (count == 2) {
@@ -604,7 +604,7 @@ public class PartitionTestCase {
                 } else if (count == 3) {
                     Assert.assertEquals(75.0f, events[0].getData()[1]);
                 } else if (count == 4) {
-                    Assert.assertEquals(50.0f,events[0].getData()[1]);
+                    Assert.assertEquals(50.0f, events[0].getData()[1]);
                 }
                 eventArrived = true;
             }
@@ -639,7 +639,7 @@ public class PartitionTestCase {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                count = count+events.length;
+                count = count + events.length;
                 if (count == 1) {
                     Assert.assertEquals(75.0f, events[0].getData()[1]);
                 } else if (count == 2) {
@@ -647,7 +647,7 @@ public class PartitionTestCase {
                 } else if (count == 3) {
                     Assert.assertEquals(35.0f, events[0].getData()[1]);
                 } else if (count == 4) {
-                    Assert.assertEquals(50.0f,events[0].getData()[1]);
+                    Assert.assertEquals(50.0f, events[0].getData()[1]);
                 }
                 eventArrived = true;
             }
@@ -682,7 +682,7 @@ public class PartitionTestCase {
             @Override
             public void receive(Event[] events) {
                 EventPrinter.print(events);
-                count = count+events.length;
+                count = count + events.length;
                 if (count == 1) {
                     Assert.assertEquals(75.0, events[0].getData()[1]);
                 } else if (count == 2) {
@@ -690,7 +690,7 @@ public class PartitionTestCase {
                 } else if (count == 3) {
                     Assert.assertEquals(55.0, events[0].getData()[1]);
                 } else if (count == 4) {
-                    Assert.assertEquals(50.0,events[0].getData()[1]);
+                    Assert.assertEquals(50.0, events[0].getData()[1]);
                 }
                 eventArrived = true;
             }

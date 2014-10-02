@@ -38,7 +38,7 @@ public class PassThroughOutputRateLimiter extends OutputRateLimiter {
     @Override
     public void send(long timeStamp, StreamEvent currentEvent, StreamEvent expiredEvent) {
         if (log.isTraceEnabled()) {
-            log.trace("event is sent through outputRateLimiter "+ id+ this);
+            log.trace("event is sent through outputRateLimiter " + id + this);
         }
         sendToCallBacks(timeStamp, currentEvent, expiredEvent, currentEvent != null ? currentEvent : expiredEvent);
     }

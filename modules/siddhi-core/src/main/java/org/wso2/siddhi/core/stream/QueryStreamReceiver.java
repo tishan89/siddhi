@@ -91,8 +91,8 @@ public class QueryStreamReceiver implements StreamJunction.Receiver {
                 lastStreamEventInBuffer = streamEvent;
             }
         } else {
-               lastStreamEventInBuffer.setNext(streamEvent);
-               lastStreamEventInBuffer = streamEvent;
+            lastStreamEventInBuffer.setNext(streamEvent);
+            lastStreamEventInBuffer = streamEvent;
             if (endOfBatch) {
                 next.process(streamEventBuffer);
                 eventConstructor.returnEvent(streamEventBuffer);

@@ -27,16 +27,16 @@ public class PartitionInstanceRuntime {
     private String key;
     private List<QueryRuntime> queryRuntimeList;
 
-    public PartitionInstanceRuntime(String key,List<QueryRuntime> queryRuntimeList){
-        this.key =key;
+    public PartitionInstanceRuntime(String key, List<QueryRuntime> queryRuntimeList) {
+        this.key = key;
         this.queryRuntimeList = queryRuntimeList;
     }
 
-    public List<QueryRuntime> getQueryRuntimeList(){
+    public List<QueryRuntime> getQueryRuntimeList() {
         return queryRuntimeList;
     }
 
-    public String getKey(){
+    public String getKey() {
         return key;
     }
 

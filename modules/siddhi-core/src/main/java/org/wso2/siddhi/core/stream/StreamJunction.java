@@ -107,7 +107,6 @@ public class StreamJunction {
                 existingEvent.setTimestamp(timeStamp);
                 existingEvent.setIsExpired(false);
                 System.arraycopy(data, 0, existingEvent.getData(), 0, data.length);
-                existingEvent.setIsExpired(false);
                 if (data == null) {
                     existingEvent.setTimerEvent(true);
                 } else {

@@ -181,10 +181,10 @@ public class PartitionRuntime {
     }
 
     public PartitionInstanceRuntime getPartitionInstanceRuntime(String key) {
-        for(PartitionInstanceRuntime partitionInstanceRuntime:partitionInstanceRuntimeList) {
-             if(key.equals(partitionInstanceRuntime.getKey())){
-                 return partitionInstanceRuntime;
-             }
+        for (PartitionInstanceRuntime partitionInstanceRuntime : partitionInstanceRuntimeList) {
+            if (key.equals(partitionInstanceRuntime.getKey())) {
+                return partitionInstanceRuntime;
+            }
         }
         return null;
     }

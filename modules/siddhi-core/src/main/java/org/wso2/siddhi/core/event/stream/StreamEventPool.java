@@ -65,7 +65,7 @@ public class StreamEventPool {
                 index++;
                 streamEvent = streamEvent.getNext();
             }
-            if(last != null){
+            if (last != null) {
                 last.setNext(streamEventList);
                 streamEventList = first;
             }

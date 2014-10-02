@@ -34,6 +34,7 @@ public class CustomFunctionExtension extends FunctionExecutor {
     @Override
     public void destroy() {
     }
+
     /**
      * Return type of the custom function mentioned
      *
@@ -52,8 +53,8 @@ public class CustomFunctionExtension extends FunctionExecutor {
 
     @Override
     public void init(List<ExpressionExecutor> attributeExpressionExecutors, SiddhiContext siddhiContext) {
-        for(ExpressionExecutor expressionExecutor: attributeExpressionExecutors){
-        Attribute.Type attributeType = expressionExecutor.getReturnType();
+        for (ExpressionExecutor expressionExecutor : attributeExpressionExecutors) {
+            Attribute.Type attributeType = expressionExecutor.getReturnType();
             if (attributeType == Attribute.Type.DOUBLE) {
                 returnType = attributeType;
 
@@ -70,15 +71,15 @@ public class CustomFunctionExtension extends FunctionExecutor {
     protected Object execute(Object[] obj) {
         if (returnType == Attribute.Type.DOUBLE) {
             double total = 0;
-                for (Object aObj : obj) {
-                    total += Double.parseDouble(String.valueOf(aObj));
-                }
+            for (Object aObj : obj) {
+                total += Double.parseDouble(String.valueOf(aObj));
+            }
 
             return total;
         } else {
             long total = 0;
-                for (Object aObj :  obj) {
-                    total += Long.parseLong(String.valueOf(aObj));
+            for (Object aObj : obj) {
+                total += Long.parseLong(String.valueOf(aObj));
             }
             return total;
         }

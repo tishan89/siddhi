@@ -48,31 +48,30 @@ public class ExtensionTestCase {
     }
 
 
-
     @Test
     public void ExtensionTest1() throws InterruptedException {
         log.info("extension test1");
         SiddhiManager siddhiManager = new SiddhiManager();
-        SiddhiContext siddhiContext =  siddhiManager.getSiddhiContext();
+        SiddhiContext siddhiContext = siddhiManager.getSiddhiContext();
 
-        Map<String,Class> classList = new HashMap<String,Class>();
+        Map<String, Class> classList = new HashMap<String, Class>();
         classList.put("custom:plus", CustomFunctionExtension.class);
-        classList.put("email:getAll",StringConcatAggregatorString.class);
+        classList.put("email:getAll", StringConcatAggregatorString.class);
         siddhiContext.setSiddhiExtensions(classList);
 
 
         String cseEventStream = "@config(async = 'true')define stream cseEventStream (symbol string, price float, volume long);";
         String query = ("@info(name = 'query1') from cseEventStream select price , email:getAll(symbol) as toConcat " +
-                               "group by volume insert into mailOutput;");
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream+query);
+                "group by volume insert into mailOutput;");
+        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
 
         executionPlanRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 EventPrinter.print(timeStamp, inEvents, removeEvents);
-                count= count+inEvents.length;
-                if(count==3){
-                    Assert.assertEquals("WSO2ABC",inEvents[inEvents.length-1].getData(1));
+                count = count + inEvents.length;
+                if (count == 3) {
+                    Assert.assertEquals("WSO2ABC", inEvents[inEvents.length - 1].getData(1));
                 }
                 eventArrived = true;
             }
@@ -93,30 +92,30 @@ public class ExtensionTestCase {
     public void ExtensionTest2() throws InterruptedException, ClassNotFoundException {
         log.info("extension test2");
         SiddhiManager siddhiManager = new SiddhiManager();
-        SiddhiContext siddhiContext =  siddhiManager.getSiddhiContext();
+        SiddhiContext siddhiContext = siddhiManager.getSiddhiContext();
 
-        Map<String,Class> classList = new HashMap<String, Class>();
+        Map<String, Class> classList = new HashMap<String, Class>();
         classList.put("custom:plus", CustomFunctionExtension.class);
-        classList.put("email:getAll",StringConcatAggregatorString.class);
+        classList.put("email:getAll", StringConcatAggregatorString.class);
         siddhiContext.setSiddhiExtensions(classList);
 
 
         String cseEventStream = "@config(async = 'true')define stream cseEventStream (symbol string, price long, volume long);";
         String query = ("@info(name = 'query1') from cseEventStream select symbol , custom:plus(price,volume) as totalCount " +
                 "insert into mailOutput;");
-        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream+query);
+        ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
 
         executionPlanRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 EventPrinter.print(timeStamp, inEvents, removeEvents);
-                count= count+inEvents.length;
-                if(count==1){
-                    Assert.assertEquals(800l,inEvents[0].getData(1));
-                } else if(count==2){
-                    Assert.assertEquals(805l,inEvents[0].getData(1));
-                }  else if(count==3){
-                    Assert.assertEquals(260l,inEvents[0].getData(1));
+                count = count + inEvents.length;
+                if (count == 1) {
+                    Assert.assertEquals(800l, inEvents[0].getData(1));
+                } else if (count == 2) {
+                    Assert.assertEquals(805l, inEvents[0].getData(1));
+                } else if (count == 3) {
+                    Assert.assertEquals(260l, inEvents[0].getData(1));
                 }
                 eventArrived = true;
             }
