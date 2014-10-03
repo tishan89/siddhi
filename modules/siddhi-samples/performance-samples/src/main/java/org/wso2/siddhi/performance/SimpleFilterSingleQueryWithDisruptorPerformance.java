@@ -40,13 +40,13 @@ public class SimpleFilterSingleQueryWithDisruptorPerformance {
         executionPlanRuntime.addCallback("outputStream", new StreamCallback() {
             @Override
             public void receive(Event[] inEvents) {
-                count++;
-                if (count % 10000000 == 0) {
+                count = count + inEvents.length;
+                if (count > 10000000) {
                     long end = System.currentTimeMillis();
-                    double tp = (10000000 * 1000.0 / (end - start));
-                    //System.out.println("Throughput = " + tp + " Event/sec");
-                    System.out.println("," + tp);
+                    double tp = (count * 1000.0 / (end - start));
+                    System.out.println("Throughput = " + tp + " Event/sec");
                     start = end;
+                    count = 0;
                 }
             }
 

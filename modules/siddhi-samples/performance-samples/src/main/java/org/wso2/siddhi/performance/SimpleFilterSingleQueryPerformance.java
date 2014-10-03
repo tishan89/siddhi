@@ -31,19 +31,20 @@ public class SimpleFilterSingleQueryPerformance {
     public static void main(String[] args) throws InterruptedException {
         SiddhiManager siddhiManager = new SiddhiManager();
 
-        String cseEventStream = "define stream cseEventStream (symbol string, price float, volume long);";
-        String query = "@info(name = 'query1') from cseEventStream[70 > price] select symbol,price,volume insert into outputStream ;";
+        final String cseEventStream = "@config(async = 'true')define stream cseEventStream (symbol string, price float, volume long);";
+        String query = "@info(name = 'query1') from cseEventStream[70>price] select symbol,price,volume insert into outputStream ;";
 
         ExecutionPlanRuntime executionPlanRuntime = siddhiManager.createExecutionPlanRuntime(cseEventStream + query);
         executionPlanRuntime.addCallback("query1", new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
-                count++;
-                if (count % 10000000 == 0) {
+                count = count + inEvents.length;
+                if (count > 10000000) {
                     long end = System.currentTimeMillis();
-                    double tp = (10000000 * 1000.0 / (end - start));
+                    double tp = (count * 1000.0 / (end - start));
                     System.out.println("Throughput = " + tp + " Event/sec");
                     start = end;
+                    count = 0;
                 }
             }
 
