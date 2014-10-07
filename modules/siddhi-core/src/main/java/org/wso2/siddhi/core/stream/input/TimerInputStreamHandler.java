@@ -36,7 +36,10 @@ public class TimerInputStreamHandler implements Runnable {
                 try {
                     inputHandler.send(timestamp);
                 } catch (Exception e) {
-                    log.error(e.getMessage(), e);
+                    log.error("Exception occurred when sending timer event " + timestamp + " through input handler " +
+                            inputHandler.getStreamId() + e.getMessage(), e);
+                    throw new RuntimeException("Exception occurred when sending timer event " + timestamp +
+                            " through input handler " + inputHandler.getStreamId() + e.getMessage(), e);
                 }
             }
         }
