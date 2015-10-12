@@ -39,6 +39,7 @@
         <module>time</module>
         <module>timeseries</module>
         <module>ooh</module>
+        <module>throttling</module>
     </modules>
 
 </project>
